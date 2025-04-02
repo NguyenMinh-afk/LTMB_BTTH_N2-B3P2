@@ -1,18 +1,26 @@
+import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, Text, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import icon2 from '../assets/icon_2.png';
-import React, { useState } from 'react';
 
 const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
 
-  const handleLogin = () => {
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Username:', username);
-    // Add your login logic here
+  const handleLogin = async () => {
+    try {
+      const userInfo = { email, password, username };
+      // Save user information to AsyncStorage
+      await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+      console.log('User info saved:', userInfo);
+      alert('User info saved successfully!');
+      navigation.navigate('Location'); // Navigate to the Location screen
+    } catch (error) {
+      console.error('Error saving user info:', error);
+      alert('Failed to save user info.');
+    }
   };
 
   return (
@@ -20,21 +28,22 @@ const SignIn = ({ navigation }) => {
       <View style={styles.container}>
         <Image source={icon2} style={{ width: 49, height: 57, alignSelf: 'center', marginTop: 77, marginBottom: 10 }} />
         <Text style={{ fontWeight: 'bold', fontSize: 26, marginTop: 36, marginBottom: 10 }}>Sign Up</Text>
-        <Text style={{fontSize: 16, color: '#7C7C7C' }}>
-        Enter your credentials to continue
+        <Text style={{ fontSize: 16, color: '#7C7C7C' }}>
+          Enter your credentials to continue
         </Text>
 
-        {/* Email Text Box */}
-        <Text style={{fontSize: 16, color: '#7C7C7C',marginTop:10  }}>Username</Text>
+        {/* Username Input */}
+        <Text style={{ fontSize: 16, color: '#7C7C7C', marginTop: 10 }}>Username</Text>
         <TextInput
           style={styles.input}
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
-          keyboardType="email-address"
           autoCapitalize="none"
         />
-        <Text style={{fontSize: 16, color: '#7C7C7C',marginTop:10  }}>Email</Text>
+
+        {/* Email Input */}
+        <Text style={{ fontSize: 16, color: '#7C7C7C', marginTop: 10 }}>Email</Text>
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -44,8 +53,8 @@ const SignIn = ({ navigation }) => {
           autoCapitalize="none"
         />
 
-        {/* Password Text Box */}
-        <Text style={{fontSize: 16, color: '#7C7C7C',marginTop:10 }}>Password</Text>
+        {/* Password Input */}
+        <Text style={{ fontSize: 16, color: '#7C7C7C', marginTop: 10 }}>Password</Text>
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -53,23 +62,24 @@ const SignIn = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
         />
+
         <Text style={{ fontSize: 13, color: '#7C7C7C', marginTop: 10 }}>
-        By continuing you agree to our
-        <Text> </Text>
-        <TouchableOpacity>
-            <Text style={{ fontSize: 13, color: '#53B175', fontWeight: 'bold', lineHeight: 18 }}> Terms of Service</Text>
-        </TouchableOpacity>
-        <Text> and </Text>
-        <TouchableOpacity>
+          By continuing you agree to our{' '}
+          <TouchableOpacity>
+            <Text style={{ fontSize: 13, color: '#53B175', fontWeight: 'bold', lineHeight: 18 }}>Terms of Service</Text>
+          </TouchableOpacity>{' '}
+          and{' '}
+          <TouchableOpacity>
             <Text style={{ fontSize: 13, color: '#53B175', fontWeight: 'bold', lineHeight: 18 }}>Privacy Policy</Text>
-        </TouchableOpacity>.
-        </Text>  
-        {/* Login Button */}
+          </TouchableOpacity>.
+        </Text>
+
+        {/* Sign-Up Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Sign Up</Text>
         </TouchableOpacity>
 
-        {/* Navigate to Sign Up */}
+        {/* Navigate to Sign-In */}
         <TouchableOpacity onPress={() => navigation.navigate('SignInScreen')}>
           <Text style={styles.signUpText}>
             Already have an account? <Text style={styles.signUpLink}>Sign In</Text>
